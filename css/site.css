@@ -1,0 +1,28 @@
+#body {
+    background-color: black;
+    background-image: url(bgnd.png);
+}
+#canvaswrapper {
+    background-color: black;
+    position: relative;
+    margin: auto;
+
+    width: 322px;
+    height: 621px;
+
+    border: 1px solid white;
+    border-top: 0;
+}
+#debug {
+    width: 320px;
+    height: 620px;
+
+    color: #FFF;
+    pointer-events: none;
+    overflow: hidden;
+}
+.game {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
