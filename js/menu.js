@@ -91,6 +91,9 @@ var Menu = function (items) {
         if ($.isFunction(cb))
             cb(that);
         else if (typeof cb === "object") {
+            cb["Back"] = function () {
+                that.prev();
+            };
             that.next(cb);
         }
     };
