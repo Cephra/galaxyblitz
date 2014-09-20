@@ -1,8 +1,8 @@
 // globals
 var log = function (text) {
-    var dbg = $("#debug");
-    dbg.prepend($("<br>"));
-    dbg.prepend($("<span>").text("[DEBUG] "+text));
+    //var dbg = $("#debug");
+    //dbg.prepend($("<br>"));
+    //dbg.prepend($("<span>").text("[DEBUG] "+text));
 };
 var res = new Resources({
     starfield: "gfx/starfield.png",
@@ -15,13 +15,20 @@ $(document).ready(function () {
     var renderBgnd = new RenderLoop($("#bgnd")[0], scroller);
 
     menu = new Menu({
-        "Play1": function () {
+        "Start Game": function () {
             scroller.scrolling = 
                 !scroller.scrolling;
+            menu.hide();
             log("toggled background");
         },
-        "Play2": function () {
-            log("play2 pressed");
+        "Options": {
+            "Difficulty": {
+                "Hard": 0,
+                "Medium": 0,
+                "Easy": 0,
+            },
+            "Another Option": {
+            },
         },
     });
     var renderMenu = new RenderLoop($("#menu")[0], menu);
