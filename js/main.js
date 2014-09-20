@@ -4,7 +4,7 @@ var log = function (text) {
     dbg.prepend($("<br>"));
     dbg.prepend($("<span>").text("[DEBUG] "+text));
 };
-var sprites = new SpriteLoader({
+var res = new Resources({
     starfield: "gfx/starfield.png",
     clouds: "gfx/clouds.png",
 });
@@ -27,11 +27,11 @@ $(document).ready(function () {
     var renderMenu = new RenderLoop($("#menu")[0], menu);
 
     // load resources and start
-    sprites.load(function () {
+    res.load(function () {
         renderMenu.start();
 
-        scroller.addLayer(new Parallax.Layer(sprites.starfield, 1));
-        scroller.addLayer(new Parallax.Layer(sprites.clouds, 2));
+        scroller.addLayer(new Parallax.Layer(res.starfield, 1));
+        scroller.addLayer(new Parallax.Layer(res.clouds, 2));
         renderBgnd.start();
     });
 });

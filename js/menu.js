@@ -92,10 +92,4 @@ var Menu = function (items) {
             break;
         }
     });
-
-    $(document).on("touchstart", function () {
-            var cb = that.buttons[that.itemActive].value;
-            if ($.isFunction(cb))
-                cb();
-    });
 };

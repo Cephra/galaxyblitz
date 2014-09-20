@@ -1,7 +1,5 @@
-var Parallax = (function () {
-    var module = {};
-
-    module.Layer = function (image, speed) {
+var Parallax = {
+    Layer: function (image, speed) {
         var that = this;
 
         var speed = Math.ceil(speed);
@@ -19,9 +17,8 @@ var Parallax = (function () {
             scroll = (scroll >= height) ?
                 0 : scroll+speed;
         };
-    };
-
-    module.Scroller = function () {
+    },
+    Scroller: function () {
         var that = this;
         this.scrolling = false;
         this.layers = [];
@@ -42,7 +39,5 @@ var Parallax = (function () {
                 layer.draw(context);
             });
         };
-    };
-
-    return module;
-})();
+    },
+};

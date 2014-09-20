@@ -9,14 +9,14 @@ window.requestAnimFrame = (function(callback) {
         };
 })();
 
-var SpriteLoader = function (sources) {
+var Resources = function (sources) {
     // calc number of sprites
     var numSprites = 0;
     var numLoaded = 0;
     for (var src in sources) {
         numSprites++;
     }
-
+    
     this.load = function (callback) {
         for (var src in sources) {
             this[src] = new Image();
@@ -55,26 +55,37 @@ var RenderLoop = function (canvas, callbacks) {
     // tick runs every gametick
     this.tick = function () {
         var context = that.context;
-        that.logic.call(that);
-        that.draw.call(that, context);
+        that.logic();
+        that.draw(context);
 
         // are we still running?
         if (that.running)
             requestAnimFrame(that.tick);
         else
-            that.stop.call(that, context);
+            that.stop(context);
     };
 
     // start gameloop
     this.start = function () {
-        this.running = true;
+        var context = that.context;
+        that.init(context);
 
-        this.init.call(this, this.context);
-        requestAnimFrame(this.tick);
+        that.running = true;
+        requestAnimFrame(that.tick);
     };
 
     // stop gameloop
     this.stop = function () {
-        this.running = false;
+        that.running = false;
+    };
+
+    // toggle and return state
+    this.toggle = function () {
+        if (that.running)
+            that.stop();
+        else
+            that.start();
+
+        return (that.running = !that.running);
     };
 };
