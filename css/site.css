@@ -2,7 +2,7 @@
     background-color: black;
     background-image: url(bgnd.png);
 }
-#canvaswrapper {
+#game {
     background-color: black;
     position: relative;
     margin: auto;

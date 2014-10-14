@@ -1,9 +1,4 @@
-// globals
-var log = function (text) {
-    //var dbg = $("#debug");
-    //dbg.prepend($("<br>"));
-    //dbg.prepend($("<span>").text("[DEBUG] "+text));
-};
+// Resources
 var res = new Resources({
     starfield: "gfx/starfield.png",
     clouds: "gfx/clouds.png",
@@ -12,14 +7,11 @@ var res = new Resources({
 // main
 $(document).ready(function () {
     var scroller = new Parallax.Scroller();
-    var renderBgnd = new RenderLoop($("#bgnd")[0], scroller);
 
-    menu = new Menu({
+    var menu = new Menu({
         "Start Game": function () {
-            scroller.scrolling = 
-                !scroller.scrolling;
+            scroller.scrolling = true;
             menu.hide();
-            log("toggled background");
         },
         "Options": {
             "Difficulty": {
@@ -31,14 +23,21 @@ $(document).ready(function () {
             },
         },
     });
-    var renderMenu = new RenderLoop($("#menu")[0], menu);
+
+    var width = 320;
+    var height = 620;
+
+    var renderBgnd = makeRenderLayer(width, height, scroller);
+    var renderMenu = makeRenderLayer(width, height, menu);
 
     // load resources and start
     res.load(function () {
         renderMenu.start();
 
+        // add rendering layers
         scroller.addLayer(new Parallax.Layer(res.starfield, 1));
         scroller.addLayer(new Parallax.Layer(res.clouds, 2));
+
         renderBgnd.start();
     });
 });

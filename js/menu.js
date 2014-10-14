@@ -1,28 +1,24 @@
 var Menu = function (items) {
     var that = this;
+    var context;
     var itemActive = 0;
     var hidden = false;
     var buttons = [];
     var stack = [];
 
-    function buildBtns(items) {
+    var buildBtns = function (items) {
         buttons = [];
         for (key in items) {
-            buttons.push(
-                    new MenuButton(
-                        key,
-                        items[key])
-                    );
+            var btn = new MenuButton(key,
+                    items[key]);
+            buttons.push(btn);
         }
     }
 
-    this.init = function (context) {
+    this.init = function (_context) {
         itemActive = 0;
+        context = _context;
         buildBtns(items);
-
-        that.context = context;
-        that.width = this.width;
-        that.height = this.height;
     };
 
     this.draw = function (context) {
@@ -32,17 +28,21 @@ var Menu = function (items) {
         buttons.forEach(function (v,i) {
             v.activate((i === itemActive) ||
                     false);
-            v.draw.call(this, context);
+            v.draw(context);
             context.translate(0,34);
         }, this);
         context.restore();
+    };
+
+    var fClear = function () {
+        context.clearRect(0,0,context.width,context.height);
     };
 
     // go back to previous menu
     this.prev = function () {
         // don't go further back but zero
         if (stack.length <= 0) return;
-        that.clear();
+        fClear();
         itemActive = 0;
         buttons = stack.pop();
         that.show();
@@ -50,23 +50,18 @@ var Menu = function (items) {
 
     // go to next menu
     this.next = function (items) {
-        that.clear();
+        fClear();
         stack.push(buttons);
         itemActive = 0;
         buildBtns(items);
     };
 
-    this.clear = function () {
-        that.context.clearRect(0,0,that.width,that.height);
-    };
-
     this.hide = function () {
-        that.clear();
-        that.hidden = true;
+        fClear();
+        hidden = true;
     };
-
     this.show = function () {
-        that.hidden = false;
+        hidden = false;
         buttons.forEach(function (btn) {
             btn.redraw = true;
         });
@@ -131,11 +126,11 @@ var MenuButton = function (text, value) {
         context.save();
         context.fillStyle = (active) ?
             "#003" : "#333";
-        context.fillRect(0,0,this.width-8,32);
+        context.fillRect(0,0,context.width-8,32);
         context.fillStyle = "#FFF";
         context.font = "16pt Sans";
         context.textAlign = "center";
-        context.fillText(text, this.width/2, 24);
+        context.fillText(text, context.width/2, 24);
         context.restore();
         that.redraw = false;
     };

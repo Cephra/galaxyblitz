@@ -1,4 +1,4 @@
-window.requestAnimFrame = (function(callback) {
+window.requestAnimFrame = (function () {
     return window.requestAnimationFrame || 
         window.webkitRequestAnimationFrame || 
         window.mozRequestAnimationFrame ||
@@ -30,62 +30,64 @@ var Resources = function (sources) {
     };
 };
 
-var RenderLoop = function (canvas, callbacks) {
-    // members
-    var that = this;
-    this.canvas = canvas;
-    this.context = canvas.getContext("2d");
-    this.width = canvas.width;
-    this.height= canvas.height;
+var makeRenderLayer = function (width, height, drawable) {
+    var obj = {};
 
-    // callbacks
-    var cbs = {
-        init: new Function(),   // loop started
-        logic: new Function(),  // logic worker
-        draw: new Function(),   // draw worker
-        stop: new Function(),   // loop stopped
+    // initalize canvas and context
+    var canvas = $("<canvas></canvas>");
+    var context = canvas[0].getContext("2d");
+    context.width = width;
+    context.height = height;
+    canvas.attr({
+        class: "game",
+        width: width,
+        height: height,
+    });
+    $("#game").append(canvas);
+
+    var callback = function (name) {
+        var f = drawable[name];
+
+        if (typeof f === "function") {
+            return f;
+        }
+        return new Function();
     }
-    for (key in cbs) {
-        this[key] = cbs[key];
-        if (callbacks[key] != undefined) {
-            this[key] = callbacks[key];
+
+    // the loop
+    var running = false;
+    var tick = function () {
+        // issue callbacks
+        callback("logic")(context);
+        callback("draw")(context);
+
+        // loop again?
+        if (running) {
+            requestAnimFrame(tick);
+        } else {
+            //TODO work on this
+            //that.stop(context);
+        }
+    };
+    obj.start = function () {
+        running = true;
+
+        callback("init")(context);
+
+        requestAnimFrame(tick);
+    };
+    obj.stop = function () {
+        running = false;
+
+        callback("stop")(context);
+    };
+    obj.toggle = function () {
+        if (running) {
+            obj.stop();
+        } else {
+            obj.start();
         }
     }
 
-    // tick runs every gametick
-    this.tick = function () {
-        var context = that.context;
-        that.logic();
-        that.draw(context);
-
-        // are we still running?
-        if (that.running)
-            requestAnimFrame(that.tick);
-        else
-            that.stop(context);
-    };
-
-    // start gameloop
-    this.start = function () {
-        var context = that.context;
-        that.init(context);
-
-        that.running = true;
-        requestAnimFrame(that.tick);
-    };
-
-    // stop gameloop
-    this.stop = function () {
-        that.running = false;
-    };
-
-    // toggle and return state
-    this.toggle = function () {
-        if (that.running)
-            that.stop();
-        else
-            that.start();
-
-        return (that.running = !that.running);
-    };
+    return obj;
 };
