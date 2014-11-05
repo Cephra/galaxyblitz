@@ -7,19 +7,21 @@ var res = new Resources({
 // main
 $(document).ready(function () {
     var scroller = new Parallax.Scroller();
-
+    
+    var startGame = function (difficulty) {
+        scroller.start();
+        menu.hide();
+    };
     var menu = new Menu({
-        "Start Game": function () {
-            scroller.scrolling = true;
-            menu.hide();
-        },
-        "Options": {
-            "Difficulty": {
-                "Hard": 0,
-                "Medium": 0,
-                "Easy": 0,
+        "Start Game": { 
+            "Easy": function () {
+                startGame(0);
             },
-            "Another Option": {
+            "Normal": function () {
+                startGame(1);
+            },
+            "Hard": function () {
+                startGame(2);
             },
         },
     });
@@ -32,12 +34,14 @@ $(document).ready(function () {
 
     // load resources and start
     res.load(function () {
-        renderMenu.start();
 
         // add rendering layers
         scroller.addLayer(new Parallax.Layer(res.starfield, 1));
         scroller.addLayer(new Parallax.Layer(res.clouds, 2));
 
+        renderMenu.start();
         renderBgnd.start();
+
+        Controller.set(menu);
     });
 });

@@ -1,7 +1,8 @@
-#body {
+body {
     background-color: black;
     background-image: url(bgnd.png);
 }
+
 #game {
     background-color: black;
     position: relative;

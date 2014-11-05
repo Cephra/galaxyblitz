@@ -38,23 +38,6 @@ var Menu = function (items) {
         context.clearRect(0,0,context.width,context.height);
     };
 
-    // go back to previous menu
-    this.prev = function () {
-        // don't go further back but zero
-        if (stack.length <= 0) return;
-        fClear();
-        itemActive = 0;
-        buttons = stack.pop();
-        that.show();
-    };
-
-    // go to next menu
-    this.next = function (items) {
-        fClear();
-        stack.push(buttons);
-        itemActive = 0;
-        buildBtns(items);
-    };
 
     this.hide = function () {
         fClear();
@@ -67,50 +50,52 @@ var Menu = function (items) {
         });
     };
 
+    this.goNext = function (items) {
+        fClear();
+        stack.push(buttons);
+        itemActive = 0;
+        buildBtns(items);
+    };
+    this.goBack = function () {
+        if (hidden) return;
+        // don't go further back but zero
+        if (stack.length <= 0) return;
+        fClear();
+        itemActive = 0;
+        buttons = stack.pop();
+        that.show();
+    };
     this.goDown = function () {
+        if (hidden) return;
         var cntBtns = buttons.length;
         (itemActive < cntBtns-1) ?
             itemActive++ :
             itemActive = 0;
     };
-
     this.goUp = function () {
+        if (hidden) return;
         var cntBtns = buttons.length;
         (itemActive > 0) ?
             itemActive-- :
             itemActive = cntBtns-1;
     };
-
     this.pressBtn = function () {
+        if (hidden) return;
         var cb = buttons[itemActive].value;
         if ($.isFunction(cb))
             cb(that);
         else if (typeof cb === "object") {
             cb["Back"] = function () {
-                that.prev();
+                that.goBack();
             };
-            that.next(cb);
+            that.goNext(cb);
         }
     };
 
-    // TODO move this somewhere else 
-    // e.g. put a global event handler
-    $(document).keydown(function (e) {
-        switch (e.which) {
-        case 38:
-            that.goUp();
-            break;
-        case 40:
-            that.goDown();
-            break;
-        case 13:
-            that.pressBtn();
-            break;
-        case 27:
-            that.prev();
-            break;
-        }
-    });
+    this.up = that.goUp;
+    this.down = that.goDown;
+    this.enter = that.pressBtn;
+    this.esc = that.goBack;
 };
 
 var MenuButton = function (text, value) {
