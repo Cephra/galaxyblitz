@@ -20,34 +20,35 @@ var Parallax = {
     },
     Scroller: function () {
         var that = this;
-        scrolling = false;
-        layers = [];
+        var scrolling = false;
+        var layers = [];
+        var renderLayer = makeRenderLayer(width, height);
 
         this.addLayer = function (layer) {
             layers.push(layer);
         }
 
-        this.init = function (context) {
-            layers.forEach(function (layer) {
-                layer.draw(context);
-            });
-        };
-
-        this.draw = function (context) {
-            if (!scrolling) return;
-            layers.forEach(function (layer) {
-                layer.draw(context);
-            });
-        };
+        renderLayer.setCallbacks({
+            init: function (context) {
+                layers.forEach(function (layer) {
+                    layer.draw(context);
+                });
+            },
+            draw: function (context) {
+                layers.forEach(function (layer) {
+                    layer.draw(context);
+                });
+            },
+        });
 
         that.start = function () {
-            scrolling = true;
+            renderLayer.start();
         }
         that.stop = function () {
-            scrolling = false;
+            renderLayer.stop();
         }
         that.toggle = function () {
-            scrolling = !scrolling;
+            renderLayer.toggle();
         }
     },
 };

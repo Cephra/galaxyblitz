@@ -30,7 +30,7 @@ var Resources = function (sources) {
     };
 };
 
-var makeRenderLayer = function (width, height, drawable) {
+var makeRenderLayer = function (width, height) {
     var obj = {};
 
     // initalize canvas and context
@@ -45,48 +45,52 @@ var makeRenderLayer = function (width, height, drawable) {
     });
     $("#game").append(canvas);
 
+    obj.getContext = function () {
+        return context;
+    };
+
+    // callbacks
+    var callbacks = {};
     var callback = function (name) {
-        var f = drawable[name];
+        var f = callbacks[name];
 
         if (typeof f === "function") {
-            return f;
+            f(context);
         }
-        return new Function();
     }
+    obj.setCallbacks = function (cbs) {
+        callbacks = cbs;
+    };
 
     // the loop
     var running = false;
     var tick = function () {
         // issue callbacks
-        callback("logic")(context);
-        callback("draw")(context);
-
+        callback("logic");
+        callback("draw");
         // loop again?
         if (running) {
             requestAnimFrame(tick);
-        } else {
-            //TODO work on this
-            //that.stop(context);
-        }
+        };
     };
+
+    // loop control
     obj.start = function () {
         running = true;
 
-        callback("init")(context);
+        callback("init");
 
         requestAnimFrame(tick);
     };
     obj.stop = function () {
         running = false;
 
-        callback("stop")(context);
+        callback("stop");
     };
     obj.toggle = function () {
-        if (running) {
-            obj.stop();
-        } else {
+        (running) ? 
+            obj.stop() : 
             obj.start();
-        }
     }
 
     return obj;
