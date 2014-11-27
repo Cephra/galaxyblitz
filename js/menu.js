@@ -2,17 +2,18 @@
 var Menu = function (items) {
     var that = this;
 
-    var renderLayer = makeRenderLayer(width, height);
-    var context = renderLayer.getContext();
+    var renderLayer = Render.makeLayer(),
+        width = Render.getWidth(), height = Render.getHeight(),
+        context = renderLayer.getContext();
 
-    var itemActive = 0;
-    var hidden = false;
-    var buttons = [];
-    var stack = [];
+    var itemActive = 0,
+        hidden = false,
+        buttons = [],
+        stack = [];
 
     var MenuButton = function (text, value) {
-        var that = this;
-        var active = false;
+        var that = this, 
+            active = false;
     
         this.name = text;
         this.value = value;
@@ -23,11 +24,11 @@ var Menu = function (items) {
             context.save();
             context.fillStyle = (active) ?
                 "#003" : "#333";
-            context.fillRect(0,0,context.width-8,32);
+            context.fillRect(0,0,width-8,32);
             context.fillStyle = "#FFF";
             context.font = "16pt Arial";
             context.textAlign = "center";
-            context.fillText(text, context.width/2, 24);
+            context.fillText(text, width/2, 24);
             context.restore();
             that.redraw = false;
         };
@@ -49,7 +50,7 @@ var Menu = function (items) {
         }
     };
     var clear = function () {
-        context.clearRect(0,0,context.width,context.height);
+        context.clearRect(0,0,width,height);
     };
 
     renderLayer.setCallbacks({
@@ -129,10 +130,12 @@ var Menu = function (items) {
 
     // controller object
     var controlHandlers = {
-        up: that.goUp,
-        down: that.goDown,
-        enter: that.pressBtn,
-        esc: that.goBack,
+        pressed: {
+            up: that.goUp,
+            down: that.goDown,
+            enter: that.pressBtn,
+            esc: that.goBack,
+        },
     };
     this.getController = function () {
         return controlHandlers;
