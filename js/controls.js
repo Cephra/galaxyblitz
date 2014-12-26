@@ -1,58 +1,81 @@
 var Controller = (function () {
-    var obj = {};
-    var currController = {};
+  var obj = {};
+  var currController = {};
+  var keyStates = {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
 
-    var execHandler = function (name, pressed) {
-        var f = currController[pressed] &&
-            currController[pressed][name];
+    enter: false,
+    esc: false,
 
-        if (typeof f === "function") {
-            f();
-        }
-    };
-    var key = function (which, pressed) {
-        switch (which) {
+    space: false,
+  };
 
-        case 38:
-            execHandler("up", pressed);
-            break;
-        case 40:
-            execHandler("down", pressed);
-            break;
-        case 37:
-            execHandler("left", pressed);
-            break;
-        case 39:
-            execHandler("right", pressed);
-            break;
+  var execHandler = function (name, state) {
+    var f = currController[state] &&
+      currController[state][name];
 
-        case 13:
-            execHandler("enter", pressed);
-            break;
-        case 27:
-            execHandler("esc", pressed);
-            break;
+    if (typeof f === "function") {
+      if (state === "pressed" && !keyStates[name]) {
+        keyStates[name] = true;
+        f();
+      } else if (state === "unpressed" && keyStates[name]) {
+        keyStates[name] = false;
+        f();
+      }
+    }
 
-        case 32:
-            execHandler("space", pressed);
-            break;
+    if (state === "pressed") {
+      keyStates[name] = true;
+    } else {
+      keyStates[name] = false;
+    }
+  };
+  var chkKey = function (which, state) {
+    switch (which) {
 
-        default:
-            console.log(which+" "+pressed);
-            break;
-        }
-    };
+    case 38:
+      execHandler("up", state);
+      break;
+    case 40:
+      execHandler("down", state);
+      break;
+    case 37:
+      execHandler("left", state);
+      break;
+    case 39:
+      execHandler("right", state);
+      break;
 
-    $(document).keydown(function (e) {
-        key(e.which, "pressed");
-    });
-    $(document).keyup(function (e) {
-        key(e.which, "unpressed");
-    });
+    case 13:
+      execHandler("enter", state);
+      break;
+    case 27:
+      execHandler("esc", state);
+      break;
 
-    obj.set = function (to) {
-        currController = to;
-    };
+    case 32:
+      execHandler("space", state);
+      break;
 
-    return obj;
+    default:
+      console.log(which+" "+state);
+      break;
+    }
+  };
+
+  $(document).keydown(function (e) {
+    chkKey(e.which, "pressed");
+  });
+  $(document).keyup(function (e) {
+    chkKey(e.which, "unpressed");
+  });
+
+  obj.set = function (to) {
+    currController = to;
+  };
+
+  return obj;
 }());
