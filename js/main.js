@@ -23,6 +23,14 @@ $(document).ready(function () {
         startGame(2);
       },
     },
+    "Options": { 
+      "Do work": function () {
+        console.log("Hello World!");
+      },
+      "Do other work": function () {
+        console.log("Hello other World!");
+      },
+    },
   });
 
   var logicDrawables = new Drawables();
